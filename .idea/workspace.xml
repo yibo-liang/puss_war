@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dc8d4cf1-e3c3-4de9-a692-eaf9aea1df75" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/abilities/the_world.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/actions/attack_action.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cards/attack_card.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/game_objects.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/interface/ability.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/interface/action.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/interface/card.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game_core.py" afterPath="$PROJECT_DIR$/game_core.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/user.py" afterPath="$PROJECT_DIR$/user.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -64,8 +54,8 @@
       <file leaf-file-name="game_core.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game_core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="42" column="64" lean-forward="false" selection-start-line="42" selection-start-column="64" selection-end-line="42" selection-end-column="64" />
+            <state relative-caret-position="513">
+              <caret line="57" column="41" lean-forward="false" selection-start-line="57" selection-start-column="41" selection-end-line="57" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -690,8 +680,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game_core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="42" column="64" lean-forward="false" selection-start-line="42" selection-start-column="64" selection-end-line="42" selection-end-column="64" />
+        <state relative-caret-position="513">
+          <caret line="57" column="41" lean-forward="false" selection-start-line="57" selection-start-column="41" selection-end-line="57" selection-end-column="41" />
           <folding />
         </state>
       </provider>

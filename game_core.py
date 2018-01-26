@@ -40,9 +40,9 @@ class Game_entity:
         # game round
         self.game_round = 1
 
-        # game action queue, will be executed when player is at each state
-        self.queues = {
-            0: {
+        # game action queue, will be executed when player is at each state, of each round
+        def new_round_actions_queues():
+            return {
                 "pre_drawing_actions": None,
                 "post_drawing_actions": None,
 
@@ -53,6 +53,9 @@ class Game_entity:
                 "pre_discard_actions": None,
                 "post_discard_actions": None,
             }
+
+        self.queues = {
+            0: new_round_actions_queues()
         }
 
         # action watcher queue, when before, during, or after each action is being executed
