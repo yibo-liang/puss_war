@@ -1,11 +1,14 @@
 import threading
+import queue
+from helper import threadsafe
 
 
-class user_game_thread(threading.Thread):
-    def __init__(self, socket, server_status):
+# This thread is runing for each time a user is starting a game
+class user_game_initialising_thread(threading.Thread):
+    def __init__(self, connection, server_status):
         threading.Thread.__init__(self)
         # game socket , not for login or chat
-        self.socket = socket
+        self.connection = connection
         self.server_status = server_status
 
     def run(self):
@@ -16,17 +19,39 @@ class user_game_thread(threading.Thread):
 
         # game get from server_status.active_game
 
-        # add {userid, socket} to the game,
+        # add {userid, connection} to the game,
 
         # end
 
 
 class Game_entity:
-    def __init__(self, server_status):
+    lock = threading.Lock()
+    current_game_count = 0
+    total_game_count = 0
+    active_games = {}
+
+    def __del__(self):
+        Game_entity.lock.acquire()
+        Game_entity.current_game_count -= 1
+        Game_entity.active_games.pop(self.id)
+        Game_entity.lock.release()
+
+    def __init__(self, users, server_status):
+
+        def new_game(self):
+            Game_entity.lock.acquire()
+            Game_entity.total_game_count += 1
+            Game_entity.current_game_count += 1
+
+            self.game_id = Game_entity.total_game_count
+            Game_entity.active_games[self.game_id] = self
+            Game_entity.lock.release()
+
         # basic information
-        self.users = {}
+        self.users = users
         self.server_status = server_status
-        self.game_id = None
+        new_game(self)
+        self.msg_queue = queue.Queue()
 
         # card game information
 
@@ -43,19 +68,19 @@ class Game_entity:
         # game action queue, will be executed when player is at each state, of each round
         def new_round_actions_queues():
             return {
-                "pre_drawing_actions": None,
-                "post_drawing_actions": None,
+                "pre_drawing_actions": queue.Queue(),
+                "post_drawing_actions": queue.Queue(),
 
-                "pre_play_actions": None,
-                "current_actions": None,
-                "post_play_actions": None,
+                "pre_play_actions": queue.Queue(),
+                "current_actions": queue.Queue(),
+                "post_play_actions": queue.Queue(),
 
-                "pre_discard_actions": None,
-                "post_discard_actions": None,
+                "pre_discard_actions": queue.Queue(),
+                "post_discard_actions": queue.Queue(),
             }
 
         self.queues = {
-            0: new_round_actions_queues()
+            1: new_round_actions_queues()
         }
 
         # action watcher queue, when before, during, or after each action is being executed
@@ -63,11 +88,17 @@ class Game_entity:
         # can be used to handle passives
         self.action_watchers = None
 
-        # current_hand
-        self.current_hand = "uid"
+        # current_hand, 0 or 1 in order
+        self.current_hand = 0
 
         # game speed, the number of accumulation per second
         self.game_speed = 1
+
+        # play order, should be random
+        self.play_order = {
+            0: "uid",
+            1: "uid"
+        }
 
         # player info
         self.players = {
@@ -102,10 +133,16 @@ class Game_entity:
         # TODO
         self.history = []
 
-    def user_connect_game(self, user_id, socket):
+    def is_client_for_this_game(self, client_id):
+        for uid in self.users:
+            if self.users[uid] is not None and self.users[uid].wsclient_connection.id == client_id:
+                return True
+        return False
+
+    def user_connect_game(self, user_id, wsclient_connection):
         self.users[user_id] = {
             "uid": user_id,
-            "game_socket": socket
+            "wsclient_connection": wsclient_connection
         }
 
     def check_user_connection(self):
