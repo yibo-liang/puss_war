@@ -1,0 +1,24 @@
+Players or Player+AI join game
+
+Create Game entity with players
+
+Sync
+
+Select First Player
+
+Draw one card for second player (Without Event Listeners)
+
+Sync
+
+Game Starts (Event call)
+
+Sync
+
+Human Player Term Play:
+    Draw
+    Play
+    Discard
+Or
+AI Play:
+    Some actions
+
