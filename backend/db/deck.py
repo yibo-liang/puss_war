@@ -1,5 +1,6 @@
 from db._db_interface import *
 
+
 class DeckDBInterface:
 
     @staticmethod
@@ -7,16 +8,26 @@ class DeckDBInterface:
         try:
             db = NoSQLDatabase()
             db.init()
-            u = db.find_one_by_key("_id", id, "deck")
+            deck = db.find_one_by_key("_id", id, "deck")
         except Exception as ex:
             print("ERROR")
             raise ex
-        return u
+        return deck
+
+    @staticmethod
+    def get_decks_by_deck_id_list(id_list):
+        try:
+            db = NoSQLDatabase()
+            db.init()
+            decks = db.find_all_by_keylist("_id", id_list, "deck")
+        except Exception as ex:
+            print("Error")
+            raise ex
+        return decks
 
     @staticmethod
     def update_deck(deck):
         pass
-
 
 
 def dev_init():
@@ -37,12 +48,12 @@ def dev_init():
             {"card_id": 2},
         ],
         "cat_cards": [
-            {"card_id": 1},
-            {"card_id": 1},
-            {"card_id": 1},
-            {"card_id": 2},
-            {"card_id": 2},
-            {"card_id": 2},
+            {"card_id": 10001},
+            {"card_id": 10001},
+            {"card_id": 10001},
+            {"card_id": 10002},
+            {"card_id": 10002},
+            {"card_id": 10002},
         ]
     }
     test_deck2 = {
@@ -57,12 +68,12 @@ def dev_init():
             {"card_id": 2},
         ],
         "cat_cards": [
-            {"card_id": 1},
-            {"card_id": 1},
-            {"card_id": 1},
-            {"card_id": 2},
-            {"card_id": 2},
-            {"card_id": 2},
+            {"card_id": 10001},
+            {"card_id": 10001},
+            {"card_id": 10001},
+            {"card_id": 10002},
+            {"card_id": 10002},
+            {"card_id": 10002},
         ]
     }
     db.save_record(collection_name="deck", record=test_deck1)

@@ -8,7 +8,7 @@ class ApostleDBInterface:
         try:
             db = NoSQLDatabase()
             db.init()
-            u = db.find_one_by_key("_id", id, "deck")
+            u = db.find_one_by_key("_id", id, "apostle")
         except Exception as ex:
             print("ERROR")
             raise ex
@@ -27,13 +27,15 @@ def dev_init():
     db.init()
     test_agent1 = {
         "_id": 1,
-        "name": "Xiaoming",
-        "thumbnail": ""
+        "name": "路人甲",
+        "gender": "male",
+        "thumbnail": "1.png"
     }
     test_agent2 = {
         "_id": 2,
-        "name": "Xiaohong",
-        "thumbnail": ""
+        "name": "路人乙",
+        "gender": "female",
+        "thumbnail": "1.png"
     }
     db.save_record(collection_name="apostle", record=test_agent1)
     db.save_record(collection_name="apostle", record=test_agent2)

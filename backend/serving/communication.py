@@ -8,11 +8,18 @@ from serving.message_handle import *
 
 
 def make_message(type, msg):
-    res = {
-        "type": type,
-        "content": msg
-    }
-    j = json.dumps(res)
+    try:
+        res = {
+            "type": type,
+            "content": msg
+        }
+        j = json.dumps(res)
+    except:
+        res = {
+            "type": type,
+            "content": msg.__dict__
+        }
+        j = json.dumps(res)
     return j
 
 
@@ -25,7 +32,9 @@ def handle_message(client_wss, msg):
     cases = {
         C_TEXT: c_text,
         C_TRY_LOGIN: c_try_login,
-        C_GAME: c_game
+        C_GAME: c_game,
+        C_JOIN_NORMAL_GAME: c_join_normal_queue,
+        C_EXIT_NORMAL_QUEUE: c_exit_normal_queue
     }
     case = msg["type"]
     print("Case = {}".format(case))
@@ -39,45 +48,37 @@ def handle_message(client_wss, msg):
         print("Client {} sent unknown message : {}".format(client_wss.address, msg))
 
 
-
 class ClientWSocket(WebSocket):
+    count = 0
+
     def __init__(self, server, sock, address):
         WebSocket.__init__(self, server, sock, address)
         self.cookie = None
         self.lock = threading.Lock()
-        self.current_game_msg_queue = None
+        self.current_game = None  # should be None if not in a game
+        self.id = ClientWSocket.count
+        print("Client Socket Init {}".format(ClientWSocket.count))
+        ClientWSocket.count += 1
 
     def send(self, msg):
+        print("Send")
         s = json.dumps(msg)
         self.sendMessage(s)
         print("Sent {} to Client {}".format(s, self.address))
 
     def handleMessage(self):
         # lock for each message, so this ws is in fact sync
+        print("Handle Message [{}] {}".format(self.id, self.data))
         self.lock.acquire()
         handle_message(self, self.data)
         self.lock.release()
 
     def handleConnected(self):
-        self.lock.acquire()
         print("Client {} connected".format(self.address))
-        try:
-            # msg = build_message(msg="Connected")
-            # self.sendMessage(msg)
-            init_msg = make_message(S_INIT, [
-                [S_TEXT, S_LOGIN_SUCCESS, S_LOGIN_FAIL],
-                [C_TEXT, C_TRY_LOGIN]
-            ])
-            self.send(init_msg)
-
-        except Exception:
-            print(Exception)
-
-        self.lock.release()
 
     def handleClose(self):
-        if self.current_game_msg_queue is not None:
-            self.current_game_msg_queue.put(make_message(C_IN_GAME_EXIT, {}))
+        if self.current_game is not None:
+            self.current_game.add_critic_message(self.cookie, make_message(C_IN_GAME_EXIT, {}))
         if self.cookie is not None:
             disconnect(self)
 

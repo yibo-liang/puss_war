@@ -35,11 +35,15 @@ class CardDBInterface:
             for c in cat_cards:
                 card = db.find_one_by_key("_id", c["card_id"], "card")
                 r2.append(card)
-
+            print("r1",r1)
+            print("r2",r2)
         except Exception as ex:
             print("ERROR")
             raise ex
-        return r1, r2
+        return {
+            "apostle_cards": r1,
+            "cat_cards": r2
+        }
 
 
 def dev_init():
@@ -54,6 +58,7 @@ def dev_init():
         "type": "apostle",
         "title": "attack",
         "description": "Apostle Attack once",
+        "visibility":"default",
         "thumbnail": ""
     }
     test_card2 = {
@@ -61,6 +66,7 @@ def dev_init():
         "type": "apostle",
         "title": "dodge",
         "description": "Avoid next attack within 2 rounds",
+        "visibility": "default",
         "thumbnail": ""
     }
     test_card3 = {
@@ -68,6 +74,7 @@ def dev_init():
         "type": "cat",
         "title": "attack",
         "description": "Cat Attack once",
+        "visibility": "default",
         "thumbnail": ""
     }
     test_card4 = {
@@ -75,6 +82,7 @@ def dev_init():
         "type": "cat",
         "title": "dodge",
         "description": "Avoid next attack within 2 rounds",
+        "visibility": "default",
         "thumbnail": ""
     }
     db.save_record(collection_name="card", record=test_card1)

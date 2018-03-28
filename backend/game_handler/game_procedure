@@ -22,3 +22,43 @@ Or
 AI Play:
     Some actions
 
+
+
+settlement -> use operator (changes entity directly)
+operator -> triggers events
+operator -> create new settlement
+event -> create new settlement
+
+
+
+
+
+#
+# class PlaceHolder(object, metaclass=ABCMeta):
+#
+#     @property
+#     @abstractmethod
+#     def game_thread(self):
+#         raise NotImplementedError("Player PlaceHolder : game_thread not implemented")
+#
+#     @property
+#     @abstractmethod
+#     def type(self):
+#         raise NotImplementedError("Player PlaceHolder : type not implemented")
+#
+#     @abstractmethod
+#     def play(self):
+#         raise NotImplementedError("Player PlaceHolder : play_term not implemented")
+#
+#
+# class HumanPlayer(PlaceHolder):
+#
+#     def __init__(self, game_thread):
+#         self.game_thread = game_thread
+#         self.type = "Human"
+#
+#     def play(self):
+#         pass
+
+
+

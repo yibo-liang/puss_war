@@ -8,10 +8,29 @@ class QueueManager:
     _lock = threading.Lock()
 
     @staticmethod
-    def join_queue(cookie):
+    def join_queue(info):
+        # info = (cookie, deck_index, cat_index)
+
         QueueManager._lock.acquire()
-        QueueManager.normal_queue.append(cookie)
+        QueueManager.normal_queue.append(info)
         QueueManager._lock.release()
+        print("Join Queue with : {}".format(info))
+
+    @staticmethod
+    def exit_queue(cookie):
+        print("Trying to Exit Queue")
+        QueueManager._lock.acquire()
+        found = False
+        for i in range(len(QueueManager.normal_queue)):
+            c, _, _ = QueueManager.normal_queue[i]
+            if cookie == c:
+                del QueueManager.normal_queue[i]
+                found = True
+                break
+
+        QueueManager._lock.release()
+        print("Queue Exit : {}".format(found))
+        return found
 
     @staticmethod
     def get_queue_size():
@@ -21,7 +40,9 @@ class QueueManager:
     def remove_from_queue(cookie):
         QueueManager._lock.acquire()
         for i in range(len(QueueManager.normal_queue)):
-            if QueueManager.normal_queue[i].id == cookie.id:
+            info = QueueManager.normal_queue[i]
+            _cookie, _, _ = info
+            if _cookie == cookie:
                 QueueManager.normal_queue.pop(i)
                 break
             i += 1
@@ -31,6 +52,7 @@ class QueueManager:
     def match_players():
 
         def is_available(cookie):
+            print("Test is available {}"+cookie)
             from authentication.authmanager import AuthManager
             from serving.communication import ClientWSocketManager
             return AuthManager.is_user_authenticated(cookie) \
@@ -41,29 +63,37 @@ class QueueManager:
             QueueManager._lock.release()
             return None
         # Dummy match maker, always find top 2 players
-        cookie1 = QueueManager.normal_queue.pop(0)
+        info1 = QueueManager.normal_queue.pop(0)
+        _cookie1, _, _ = info1
         # double check if both users are online and authenticated user
-        if not is_available(cookie1):
+        # print("cookie1={}",_cookie1)
+        if not is_available(_cookie1):
             QueueManager._lock.release()
             return None
-        cookie2 = QueueManager.normal_queue.pop(0)
+        info2 = QueueManager.normal_queue.pop(0)
+        _cookie2, _, _ = info2
+
+        # print("cookie2={}", _cookie2)
         # double check if both users are online and authenticated user
-        if not is_available(cookie2):
-            QueueManager.normal_queue.append(cookie1)
+        if not is_available(_cookie2):
+            QueueManager.normal_queue.append(_cookie2)
             QueueManager._lock.release()
             return None
         QueueManager._lock.release()
-        return cookie1, cookie2
+        return [info1, info2]
 
     @staticmethod
     def start_matching_service():
+        print("Starting matching server...")
 
         def s():
             from game_matching.game_creator import MatchedGameManager
             while True:
-                cookies = QueueManager.match_players()
-                if cookies is None:
+                info = QueueManager.match_players()
+                if info is None:
                     time.sleep(1)
-                MatchedGameManager.add_matched_player(cookies)
+                    continue
+                MatchedGameManager.add_matched_player(info)
+                print("Create new Match with {}".format(info))
 
         threading.Thread(target=s).start()
